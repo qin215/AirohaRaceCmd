@@ -3126,7 +3126,7 @@ LRESULT CMp_testDlg::OnUpdateStatic(WPARAM wParam, LPARAM lParam)
 
 	if (pResult == (CString *)RAW_DATA_VALUE_ERROR)
 	{
-		CString new_str = _T("光感读取失败");
+		CString new_str = _T("光感读取失败\r\n");
 		m_result_text += new_str;
 
 		if (m_rawdata_stage == RAW_DATA_STAGE_FAR)
@@ -3317,11 +3317,13 @@ void CMp_testDlg::SendRawCmd()
 
 	if (val >= 0 && val <= m_far_high_value)
 	{
+		m_far_result.SetForeColor(RGB(0, 0, 0));
 		m_far_result.SetWindowText(_T("成功"));
 		m_far_result.SetBkColor(RGB(0, 255, 0));
 	}
 	else
 	{
+		m_far_result.SetForeColor(RGB(0, 0, 0));
 		m_far_result.SetWindowText(_T("失败"));
 		m_far_result.SetBkColor(RGB(255,0, 0));
 	}
@@ -3332,11 +3334,13 @@ void CMp_testDlg::SendRawCmd()
 
 	if (val >= m_near_low_value && val <= 65535)
 	{
+		m_near_result.SetForeColor(RGB(0, 0, 0));
 		m_near_result.SetWindowText(_T("成功"));
 		m_near_result.SetBkColor(RGB(0, 255, 0));
 	}
 	else
 	{
+		m_near_result.SetForeColor(RGB(0, 0, 0));
 		m_near_result.SetWindowText(_T("失败"));
 		m_near_result.SetBkColor(RGB(255, 0, 0));
 	}
@@ -3373,11 +3377,13 @@ void CMp_testDlg::OnBnClickedButton1()
 	
 	SetTimer(TIMER_ID_TURN_ON_POWER, 3000, NULL);		// 2s 定时器等待开机
 
-	m_far_result.SetWindowText(_T("待定"));
-	m_far_result.SetBkColor(RGB(128, 128, 128));
+	m_far_result.SetWindowText(_T("出耳光感结果"));
+	
 	m_far_result.SetForeColor(RGB(255, 255, 255));
+	m_far_result.SetBkColor(RGB(128, 128, 128));
 
-	m_near_result.SetWindowText(_T("待定"));
-	m_near_result.SetBkColor(RGB(128, 128, 128));
+	m_near_result.SetWindowText(_T("入耳光感结果"));
+	
 	m_near_result.SetForeColor(RGB(255, 255, 255));
+	m_near_result.SetBkColor(RGB(128, 128, 128));
 }

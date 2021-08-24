@@ -2,4 +2,4 @@ DEBUG/
 *.obj
 iph/
 log/
-
+*.opensdf
