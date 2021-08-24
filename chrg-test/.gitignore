@@ -1,0 +1,7 @@
+Debug/*
+!Debug/uart.ini
+Untitled*.*
+.svn/
+*.ncb
+*.suo
+log/

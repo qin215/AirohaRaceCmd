@@ -1,0 +1,55 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: mp_test - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x804 /fo"Release/mp_test.res" /d "NDEBUG" "E:\公司项目\邓工文件\WIFI6060扫码工具\pc\mp_test.rc"" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSPDF83.tmp" with contents
+[
+/nologo /MT /W3 /GX /ZI /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR"Release/" /Fp"Release/mp_test.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
+"E:\公司项目\邓工文件\WIFI6060扫码工具\pc\mp_test.cpp"
+"E:\公司项目\邓工文件\WIFI6060扫码工具\pc\mp_testDlg.cpp"
+]
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSPDF83.tmp" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSPDF84.tmp" with contents
+[
+/nologo /subsystem:windows /incremental:no /pdb:"Release/mp_test.pdb" /machine:I386 /out:"Release/mp_test.exe" 
+".\Release\mp_test.obj"
+".\Release\mp_testDlg.obj"
+".\Release\StdAfx.obj"
+".\Release\UsbIF.obj"
+".\Release\mp_test.res"
+".\IPHLPAPI.LIB"
+]
+Creating command line "link.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSPDF84.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+mp_test.cpp
+mp_testDlg.cpp
+E:\公司项目\邓工文件\WIFI6060扫码工具\pc\mp_testDlg.cpp(1893) : warning C4102: 'EXIT_DISABLE_DEV' : unreferenced label
+E:\公司项目\邓工文件\WIFI6060扫码工具\pc\mp_testDlg.cpp(2254) : warning C4101: 'pBT64addr' : unreferenced local variable
+E:\公司项目\邓工文件\WIFI6060扫码工具\pc\mp_testDlg.cpp(2300) : warning C4101: 'szTmp' : unreferenced local variable
+E:\公司项目\邓工文件\WIFI6060扫码工具\pc\mp_testDlg.cpp(2554) : warning C4101: 'p' : unreferenced local variable
+E:\公司项目\邓工文件\WIFI6060扫码工具\pc\mp_testDlg.cpp(2555) : warning C4101: 'len' : unreferenced local variable
+E:\公司项目\邓工文件\WIFI6060扫码工具\pc\mp_testDlg.cpp(2710) : warning C4101: 'pBT64addr' : unreferenced local variable
+E:\公司项目\邓工文件\WIFI6060扫码工具\pc\mp_testDlg.cpp(2891) : warning C4101: 'p' : unreferenced local variable
+E:\公司项目\邓工文件\WIFI6060扫码工具\pc\mp_testDlg.cpp(2892) : warning C4101: 'len' : unreferenced local variable
+Generating Code...
+Linking...
+LINK : warning LNK4075: ignoring /EDITANDCONTINUE due to /INCREMENTAL:NO specification
+LINK : warning LNK4089: all references to "SHELL32.dll" discarded by /OPT:REF
+Creating command line "bscmake.exe /nologo /o"Release/mp_test.bsc"  ".\Release\StdAfx.sbr" ".\Release\mp_test.sbr" ".\Release\mp_testDlg.sbr" ".\Release\UsbIF.sbr""
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+mp_test.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

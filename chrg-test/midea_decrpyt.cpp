@@ -1,0 +1,343 @@
+/*
+ * 美的license解密模块
+ */
+#include "stdafx.h"
+
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+
+#include "ServerCmd.h"
+#include "mywin.h"
+#include "ProductorErrorCode.h"
+#include "ProductorDll.h"
+#include "qcloud_iot_export_log.h"
+#include "homi_common.h"
+#include "common.h"
+
+
+#define LIB_PRODUCT_DLL_NAME "ProductorDll.dll"
+
+static InitDevice_ fn_init_device;
+static OpenDevice_ fn_open_device;
+static ParseKey_  fn_parse_key;
+static DecryptLic_ fn_decrypt_license;
+static CloseDevice_ fn_close_device;
+
+static UCHAR inCloudkey[][256] = 
+{
+	{
+		0xd3,0xf3,0x7d,0x36,0xe3,0x71,0x08,0xc6,0x79,0x3f,0x25,0x8a,0x6d,0xfd,0xf6,0x05,0x53,0x00,0x2f,0x38,0x49,0x27,0x2e,0xfb,0xd7,0x05,0xc9,0x36,0xac,0x7e,0x4d,0x7f,
+		0x60,0x89,0x05,0xfe,0x0f,0xd2,0xa8,0xb8,0xfc,0x12,0x11,0x0c,0xf8,0x4a,0x3c,0x93,0x89,0x1c,0x01,0x09,0x9b,0x1a,0xb5,0xc4,0x64,0x86,0xef,0xb8,0xde,0xf8,0xca,0x80,
+		0xb4,0xf9,0x78,0x72,0xc9,0x8c,0x0f,0xaa,0x90,0xe1,0xa9,0x85,0xf2,0xbf,0xd0,0xcc,0xbe,0x14,0x01,0x46,0xfa,0xf6,0x02,0xfe,0xa0,0x94,0x1c,0xeb,0x94,0x56,0xe5,0x47,
+		0x62,0xe0,0xc6,0x87,0xa4,0xde,0x5c,0xd8,0xbf,0xf0,0x87,0xb1,0x88,0x10,0xdf,0xaf,0x6d,0x6f,0x91,0x0c,0x18,0x55,0x14,0x11,0x9c,0xeb,0xba,0x3f,0x56,0x70,0x90,0x55,
+		0xb2,0x21,0x93,0x54,0xd5,0x4a,0x72,0x4b,0x79,0x57,0x89,0x9f,0x02,0xb2,0xda,0x81,0x42,0xef,0x30,0x99,0x3e,0x72,0x8a,0xbf,0x8e,0x1d,0x47,0x87,0x96,0x8e,0xf1,0xbf,
+		0x7d,0x87,0x18,0xc5,0x16,0x5e,0xb2,0x2a,0x23,0xde,0x7d,0x63,0xcf,0xb7,0xb1,0xd8,0x0c,0xd2,0x14,0x38,0x72,0x6d,0x78,0xed,0x17,0x1b,0x59,0x73,0xb0,0x7c,0xcc,0x0d,
+		0xea,0xff,0x79,0xc7,0xfa,0x70,0x7a,0xe1,0x94,0x36,0x3d,0x44,0xcd,0x0e,0x67,0x84,0xd0,0x79,0xb1,0xb4,0xc1,0x87,0x42,0xfd,0xd6,0xfd,0xeb,0x10,0x26,0x3b,0x8a,0xfa,
+		0x7b,0x77,0x27,0x28,0x31,0x3b,0xe3,0x7a,0xb6,0x46,0x27,0x8d,0xa3,0x0b,0xd4,0x1f,0x5c,0x59,0xb9,0x1f,0x1a,0xd9,0x8f,0x0c,0xe5,0xee,0x41,0xa2,0x8a,0xb6,0xc4,0xd3
+	},
+	{
+		0xd3,0xf3,0x7d,0x36,0xe3,0x71,0x08,0xc6,0x79,0x3f,0x25,0x8a,0x6d,0xfd,0xf6,0x05,0x53,0x00,0x2f,0x38,0x49,0x27,0x2e,0xfb,0xd7,0x05,0xc9,0x36,0xac,0x7e,0x4d,0x7f,
+		0x60,0x89,0x05,0xfe,0x0f,0xd2,0xa8,0xb8,0xfc,0x12,0x11,0x0c,0xf8,0x4a,0x3c,0x93,0x89,0x1c,0x01,0x09,0x9b,0x1a,0xb5,0xc4,0x64,0x86,0xef,0xb8,0xde,0xf8,0xca,0x80,
+		0xb4,0xf9,0x78,0x72,0xc9,0x8c,0x0f,0xaa,0x90,0xe1,0xa9,0x85,0xf2,0xbf,0xd0,0xcc,0xbe,0x14,0x01,0x46,0xfa,0xf6,0x02,0xfe,0xa0,0x94,0x1c,0xeb,0x94,0x56,0xe5,0x47,
+		0x62,0xe0,0xc6,0x87,0xa4,0xde,0x5c,0xd8,0xbf,0xf0,0x87,0xb1,0x88,0x10,0xdf,0xaf,0x6d,0x6f,0x91,0x0c,0x18,0x55,0x14,0x11,0x9c,0xeb,0xba,0x3f,0x56,0x70,0x90,0x55,
+		0xb2,0x21,0x93,0x54,0xd5,0x4a,0x72,0x4b,0x79,0x57,0x89,0x9f,0x02,0xb2,0xda,0x81,0x42,0xef,0x30,0x99,0x3e,0x72,0x8a,0xbf,0x8e,0x1d,0x47,0x87,0x96,0x8e,0xf1,0xbf,
+		0x7d,0x87,0x18,0xc5,0x16,0x5e,0xb2,0x2a,0x23,0xde,0x7d,0x63,0xcf,0xb7,0xb1,0xd8,0x0c,0xd2,0x14,0x38,0x72,0x6d,0x78,0xed,0x17,0x1b,0x59,0x73,0xb0,0x7c,0xcc,0x0d,
+		0xea,0xff,0x79,0xc7,0xfa,0x70,0x7a,0xe1,0x94,0x36,0x3d,0x44,0xcd,0x0e,0x67,0x84,0xd0,0x79,0xb1,0xb4,0xc1,0x87,0x42,0xfd,0xd6,0xfd,0xeb,0x10,0x26,0x3b,0x8a,0xfa,
+		0x7b,0x77,0x27,0x28,0x31,0x3b,0xe3,0x7a,0xb6,0x46,0x27,0x8d,0xa3,0x0b,0xd4,0x1f,0x5c,0x59,0xb9,0x1f,0x1a,0xd9,0x8f,0x0c,0xe5,0xee,0x41,0xa2,0x8a,0xb6,0xc4,0xd3
+	},
+};
+
+
+/*
+ * 载入license key
+ */
+static char * midea_load_license_key(LPCSTR lpszpath, int *file_len);
+
+/*
+ * 在动态库中获取函数地址
+ */ 
+static Boolean get_function_addr(DWORD *fn_addr, const char *fname);
+
+
+/*
+ * 保存license 信息
+ */
+static void midea_save_license_info(LPCTSTR fname, const LicenseInfo* lic_info);
+
+/*
+ * 载入美的动态库, 初始化U盾
+ */
+Boolean init_midea_device(const char *keyfile)
+{
+	int i;
+	HINSTANCE h;
+	char *lic_key;
+	int key_len;
+	char path[MAX_PATH];
+	CString key_name = keyfile; //_T("uascent20180730_092808.key");
+	int ret;
+	char str[128] = "MyToken;";
+
+	h = LoadLibrary(LIB_PRODUCT_DLL_NAME); 
+	if (!h)
+	{
+		Log_e("cannot load lib(%s)\n", LIB_PRODUCT_DLL_NAME);
+		disp_win_sys_err_msg(_T("未能载入美的动态库!"));
+		return FALSE;
+	}
+
+	fn_init_device = (InitDevice_)GetProcAddress(h, "InitDevice");
+	if (!fn_init_device)
+	{
+		Log_e("can not get InitDevice addr!\n");
+		disp_win_sys_err_msg(_T("未能找到DLL中的函数地址!"));
+		return FALSE;
+	}
+
+	fn_open_device = (OpenDevice_)GetProcAddress(h, "OpenDevice");
+	if (!fn_open_device)
+	{
+		Log_e("can not get OpenDevice addr!\n");
+		disp_win_sys_err_msg(_T("未能找到DLL中的函数地址!"));
+		return FALSE;
+	}
+
+	fn_parse_key = (ParseKey_)GetProcAddress(h, "ParseKey");
+	if (!fn_parse_key)
+	{
+		Log_e("can not get ParseKey addr!\n");
+		disp_win_sys_err_msg(_T("未能找到DLL中的函数地址!"));
+		return FALSE;
+	}
+	
+	fn_decrypt_license = (DecryptLic_)GetProcAddress(h, "DecryptLic");
+	if (!fn_decrypt_license)
+	{
+		Log_e("can not get DecryptLic addr!\n");
+		disp_win_sys_err_msg(_T("未能找到DLL中的函数地址!"));
+		return FALSE;
+	}
+
+	fn_close_device = (CloseDevice_)GetProcAddress(h, "CloseDevice");
+	if (!fn_close_device)
+	{
+		Log_e("can not get CloseDevice addr!\n");
+		disp_win_sys_err_msg(_T("未能找到DLL中的函数地址!"));
+		return FALSE;
+	}
+
+	if (fn_init_device(str) != 0)
+	{
+		Log_e("init device failed!\n");
+		return FALSE;
+	}
+
+	if (fn_open_device(str, "12345678") != 0)
+	{
+		Log_e("open device failed!\n");
+		return FALSE;
+	}
+
+	get_program_path(path, sizeof(path));
+	lstrcat(path, "\\");
+	lstrcat(path, key_name);
+	lic_key = midea_load_license_key(path, &key_len);
+	if (!lic_key)
+	{
+		AfxMessageBox(CString(_T("不能载入license key: ")) + key_name);
+		fn_close_device();
+		return FALSE;
+	}
+
+	char *bin_data = (char *)malloc(key_len);
+	if (!bin_data)
+	{
+		Log_e("no memory!\n");
+		fn_close_device();
+		return FALSE;
+	}
+
+	MyString2HexData(lic_key, (UCHAR *)bin_data, key_len);
+
+	if ((ret = fn_parse_key(bin_data, key_len / 2)) != 0)
+	{
+		Log_e("parse license key failed!\n");
+		fn_close_device();
+		return FALSE;
+	}
+
+	// test code
+#if 0	
+	const char crypt_data[] = 
+	{
+		"016768d897c5a921d2427a805d4705c37cb1581062db07c726e91acbe800e63d4f2eea3464c1f9244a497e368ccbae1db32ec45b53660d181b1b7fde735fa61b7af375c43111d4fe44d588ca5e3cb0ef64562ed00748f8ca99e17b4eb03120d2e64a45337e6727da573f27e79b9812f39daa08cd52c8d9278d5e429c0012eb59bc980ef570b91bb9c14dd1665dcb08fe6d161463bdbd51b36084a4b63eae51997ea005d470dd70ded040a302426aec0e95b1ffc9b33f2614de68c2dbe17792da26eb73326ba1094042fae5bcf9afd92a39975470c5bf4a920e0e3fde627a70cca2d071e508a981a17ec8b273b8c3a71603e821eedafff79d53997df2fb1e5f5ff26dbb7c1bb2de5edf2316bf94a19da777f7e681d822f11d7ad4600b2355bec99f7fcbb42d9f704d122701e59a359fc8ed7341f77a6d65aec3a435b7afe08e3cb7630f7ac7611f3613bcf406ab9dc4ef5b077c40eb33435c101db8d9df338dd8a5192e5353c2d757885f6fde1811995c66f4b71c6cb1960ba861086cf88cfb5724a3d7ec88007fe48578ad108f687f8f570ad2687c3f818b66ea5ea70f8f4ad491cd49862abe2c51bce63c66c00e662ba464ff58a1c12e79ef0c40e69b44d421384125be5d52cba432d5a163a1e0f09c6f359fc02e1bddd427c5e90d1c3f03c07882f3815245eb34c5728a5f4d62ce7c0e5a260e0ab3a2071e8759c0674a246d26f9d44dc17f6b1a19191066f0f94a091737433e535ebf910a5daedb0be06f3799c677ad1bc83a8068ea34379bdc82f76b62860bf20f27e49d33f654b6f412ed83c2acbfafb0fc8a484cf4ad0c533310f8914f84c6871bca166ecc57c1433f12320418a07a12a8edc3064c8f8d951b19012358625c7e2212fecd5bf2a6ae19b7d72a11365ed5938f539201597eb0c5847c7476a6b8c1179b735da31f27f7a8a365e9a96da572fe00cc1987ce33c02a3d7198185e80c5728d45764918d683f56a6e3870efdab84b04c56e9b87a3ade59b882cb3a56f77289f27d3d613e29de417"
+	};
+
+	int cryp_len = strlen(crypt_data);
+	char *ptr = (char *)malloc(cryp_len);
+	if (!ptr)
+	{
+		Log_e("no memory!\n");
+	}
+
+	MyString2HexData(crypt_data, (UCHAR *)ptr, cryp_len);
+	
+	LicenseInfo linfo;
+	int linfo_size = sizeof(linfo);
+	char otpdata[1024];
+	int otp_len = sizeof(otpdata);
+
+	memset(&linfo, 0, sizeof(linfo));
+	memset(otpdata, 0, sizeof(otpdata));
+	ret = fn_decrypt_license(ptr, cryp_len / 2, inCloudkey, &linfo, &linfo_size, otpdata, &otp_len);
+
+	sz_print_pkt("lic bin:", (kal_uint8 *)&linfo, linfo_size);
+
+	midea_save_license_info("mylic.bin", &linfo);
+
+	free(ptr);
+#endif
+
+	free(bin_data);
+	free(lic_key);
+
+	return TRUE;
+}
+
+
+/*
+ * 将输入的license 信息 crypt_data 解密, 放入pdata中, len 至少>= 2K
+ */
+int midea_decrypt_license(const char *mac_str, const char *crypt_data, kal_uint8 *pdata, int len)
+{
+	int crypt_len = strlen(crypt_data);
+	char *ptr; 
+	LicenseInfo linfo;
+	int linfo_size = sizeof(linfo);
+	char otpdata[1024];
+	int otp_len = sizeof(otpdata);
+	int ret = 0;
+
+	if (len < 2 * 1024)
+	{
+		Log_e("len is too long: len=%d\n", len);
+		return -1;
+	}
+
+	ptr = (char *)malloc(crypt_len);
+	if (!ptr)
+	{
+		Log_e("no memory!\n");
+		return -1;
+	}
+	
+	MyString2HexData(crypt_data, (UCHAR *)ptr, crypt_len);
+
+	memset(&linfo, 0, sizeof(linfo));
+	memset(otpdata, 0, sizeof(otpdata));
+
+	if (fn_decrypt_license(ptr, crypt_len / 2, inCloudkey, &linfo, &linfo_size, otpdata, &otp_len) != 0)
+	{
+		Log_e("decrypt license failed!\n");
+		ret = -1;
+		goto done;
+	}
+	else
+	{
+		ret = TRUE;
+	}
+
+	sz_print_pkt("lic bin:\n", (kal_uint8 *)&linfo, linfo_size);
+	//midea_save_license_info(mac_str, &linfo);
+done:
+	free(ptr);
+	if (ret < 0)
+	{
+		return ret;
+	}
+
+	if (linfo_size > len)
+	{
+		Log_e("buff size(%d) is too small(%d)\n", len, linfo_size);
+		linfo_size = len;
+	}
+
+	memcpy(pdata, &linfo, linfo_size);
+
+	return linfo_size;
+}
+
+/*
+ * 关闭U盾
+ */
+void midea_close_device()
+{
+	fn_close_device();
+}
+
+/*
+ * 保存license 信息
+ */
+static void midea_save_license_info(LPCTSTR fname, const LicenseInfo* lic_info)
+{	
+	TCHAR path[MAX_PATH];
+	TCHAR newPath[MAX_PATH];
+
+	get_program_path(path, sizeof(path) / sizeof(TCHAR));
+	get_file_path(path, newPath, sizeof(newPath) / sizeof(TCHAR));
+
+	lstrcat(newPath, fname);
+	try
+	{
+		CFile file(newPath, CFile::modeCreate | CFile::modeWrite);
+		file.Write((const void *)lic_info, sizeof(LicenseInfo));
+		file.Close();
+	}
+	catch (CMemoryException* e)
+	{
+		
+	}
+	catch (CFileException* e)
+	{
+		Log_e("create file failed!\n");
+	}
+	catch (CException* e)
+	{
+
+	}
+}
+
+/*
+ * 载入license key
+ */
+static char * midea_load_license_key(LPCSTR lpszpath, int *file_len)
+{
+	try 
+	{
+			CFile file(lpszpath, CFile::modeRead);
+			char *ptr;
+
+			*file_len = file.GetLength();
+			ptr = (char *)malloc(*file_len + 1);
+			if (!ptr)
+			{
+				file.Close();
+				return NULL;
+			}
+			
+			memset(ptr, 0, *file_len + 1);
+			file.Read(ptr, *file_len);
+			file.Close();
+			return ptr;
+
+	} 
+	catch (CFileException * e)
+	{
+		Log_e("file not exist!\n");
+
+		return NULL;
+	}
+}
+
+

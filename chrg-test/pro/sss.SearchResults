@@ -1,0 +1,8 @@
+---- String2HexData Matches (7 in 2 files) ----
+F32x_BulkFileTransferFunctions.h (d:\工作文件夹\芯片资料\蓝牙\bk3254\3254烧录器原理图及代码\wifi模块生产专用版本\pc):BOOL String2HexData(CString &str, UCHAR * outBuffer);
+mp_testDlg.cpp (d:\工作文件夹\芯片资料\蓝牙\bk3254\3254烧录器原理图及代码\wifi模块生产专用版本\pc):BOOL String2HexData(CString &str, UCHAR * outBuffer)
+mp_testDlg.cpp (d:\工作文件夹\芯片资料\蓝牙\bk3254\3254烧录器原理图及代码\wifi模块生产专用版本\pc):            String2HexData(addr_str, &gb_AddrTab[0][j]); 
+mp_testDlg.cpp (d:\工作文件夹\芯片资料\蓝牙\bk3254\3254烧录器原理图及代码\wifi模块生产专用版本\pc):	   String2HexData(m_btaddrStr[j], &m_btaddr[j]);
+mp_testDlg.cpp (d:\工作文件夹\芯片资料\蓝牙\bk3254\3254烧录器原理图及代码\wifi模块生产专用版本\pc):	   String2HexData(m_btaddrStr[j], &m_btaddr[j]);
+mp_testDlg.cpp (d:\工作文件夹\芯片资料\蓝牙\bk3254\3254烧录器原理图及代码\wifi模块生产专用版本\pc):		   flag &= String2HexData(m_btaddrStr[i], &m_btaddr[5-i]);
+mp_testDlg.cpp (d:\工作文件夹\芯片资料\蓝牙\bk3254\3254烧录器原理图及代码\wifi模块生产专用版本\pc):		flag &= String2HexData(m_btaddrStr[i], &m_btaddr[i]);

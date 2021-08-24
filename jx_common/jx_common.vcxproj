@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{02F9E96D-3F63-493B-8BCB-894FEA11F2C6}</ProjectGuid>
+    <RootNamespace>jx_common</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <PlatformToolset>v110</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.50727.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.\include;.\mbedtls-2.14.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;__HTTP_SUPPORT__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>copy $(ProjectDir)\regex2.dll $(OutDir)
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </Reference>
+    <Reference Include="System.Management">
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </Reference>
+    <Reference Include="System.Configuration.Install">
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\aes.c" />
+    <ClCompile Include="src\amalloc.cpp" />
+    <ClCompile Include="src\base64.c" />
+    <ClCompile Include="src\cJSON.c" />
+    <ClCompile Include="src\config.c" />
+    <ClCompile Include="src\data_buff.c" />
+    <ClCompile Include="database.cpp">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessKeepComments>
+    </ClCompile>
+    <ClCompile Include="src\f32x_util.cpp" />
+    <ClCompile Include="src\HAL_OS_win32.c" />
+    <ClCompile Include="src\http-strings.c" />
+    <ClCompile Include="src\http.c" />
+    <ClCompile Include="src\httpd-cgi.c" />
+    <ClCompile Include="src\httpd-fs.c" />
+    <ClCompile Include="src\httpd.c" />
+    <ClCompile Include="src\httpd_cookie.c" />
+    <ClCompile Include="src\httpparse.c" />
+    <ClCompile Include="src\https_cmd.c" />
+    <ClCompile Include="src\hx_net.c" />
+    <ClCompile Include="src\LicenseFile.cpp" />
+    <ClCompile Include="src\logfile.c" />
+    <ClCompile Include="src\md5.c" />
+    <ClCompile Include="src\media_test.cpp" />
+    <ClCompile Include="src\midea_license_file.cpp" />
+    <ClCompile Include="src\parse_itest_log.cpp" />
+    <ClCompile Include="src\qcloud_iot_sdk_impl.c" />
+    <ClCompile Include="src\registry_pro.cpp" />
+    <ClCompile Include="src\ringerbuff.c" />
+    <ClCompile Include="src\ServerCmd.c" />
+    <ClCompile Include="src\sk_timer_task.c" />
+    <ClCompile Include="src\sniot_license_file.cpp" />
+    <ClCompile Include="src\sniot_test_mod.c" />
+    <ClCompile Include="src\sock_list.c" />
+    <ClCompile Include="src\ssv6166_mac.c" />
+    <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\uart.c" />
+    <ClCompile Include="src\uart_obd_test.c" />
+    <ClCompile Include="src\UsbIF.cpp" />
+    <ClCompile Include="src\utils.c">
+      <MinimalRebuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</MinimalRebuild>
+      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Async</ExceptionHandling>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</BasicRuntimeChecks>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ProgramDatabase</DebugInformationFormat>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
+      <MinimalRebuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</MinimalRebuild>
+      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Async</ExceptionHandling>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Default</BasicRuntimeChecks>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+      <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ProgramDatabase</DebugInformationFormat>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</CompileAsManaged>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\base64.h" />
+    <ClInclude Include="include\cJSON.h" />
+    <ClInclude Include="include\data_buff.h" />
+    <ClInclude Include="include\f32x_util.h" />
+    <ClInclude Include="include\hekr_cmd.h" />
+    <ClInclude Include="include\hekr_uart.h" />
+    <ClInclude Include="include\homi_common.h" />
+    <ClInclude Include="include\http-strings.h" />
+    <ClInclude Include="include\httpd-cgi.h" />
+    <ClInclude Include="include\httpd-fs.h" />
+    <ClInclude Include="include\httpd-fsdata.h" />
+    <ClInclude Include="include\httpd.h" />
+    <ClInclude Include="include\httpparse.h" />
+    <ClInclude Include="include\md5.h" />
+    <ClInclude Include="include\media_test.h" />
+    <ClInclude Include="include\mywin.h" />
+    <ClInclude Include="include\qcloud_iot_export_log.h" />
+    <ClInclude Include="include\regex.h" />
+    <ClInclude Include="include\registry_pro.h" />
+    <ClInclude Include="include\ServerCmd.h" />
+    <ClInclude Include="include\sniot_test_mod.h" />
+    <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="include\uart_cmd.h" />
+    <ClInclude Include="include\uart_obd_test.h" />
+    <ClInclude Include="include\UsbIF.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Debug\msado15.tlh" />
+    <None Include="Debug\msado15.tli" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

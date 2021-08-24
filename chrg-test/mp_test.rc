@@ -1,0 +1,335 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 中文(简体，中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\mp_test.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""l.chs\\afxres.rc""          // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\mp_test.ico"
+IDI_ICON1               ICON                    "res\\1.ico"
+IDI_ICON2               ICON                    "res\\accept.ico"
+IDI_ICON3               ICON                    "res\\delete.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 275, 213
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "关于工具"
+FONT 9, "宋体", 0, 0, 0x0
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "光感检测V1.1",IDC_STATIC,43,11,119,8,SS_NOPREFIX
+    LTEXT           "版权所有LCHSE",IDC_STATIC,43,25,119,8
+    DEFPUSHBUTTON   "确定",IDOK,116,192,50,14,WS_GROUP
+    GROUPBOX        "版本信息",IDC_STATIC,43,46,211,129
+    LTEXT           "ReleaseNote",IDC_RELEASE_NOTE,55,63,190,105
+END
+
+IDD_MP_TEST_DIALOG DIALOGEX 0, 0, 318, 323
+STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "串口测试"
+FONT 12, "宋体", 0, 0, 0x1
+BEGIN
+    LTEXT           "WiFi地址：",IDC_STATIC,17,37,40,12,NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT6,60,34,22,14,ES_CENTER | ES_AUTOHSCROLL | ES_READONLY | NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT5,84,34,22,14,ES_CENTER | ES_AUTOHSCROLL | ES_READONLY | NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT4,108,34,22,14,ES_CENTER | ES_AUTOHSCROLL | ES_READONLY | NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT3,132,34,22,14,ES_CENTER | ES_AUTOHSCROLL | ES_READONLY | NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT2,156,34,22,14,ES_CENTER | ES_AUTOHSCROLL | ES_READONLY | NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT1,180,34,22,14,ES_CENTER | ES_AUTOHSCROLL | ES_READONLY | NOT WS_VISIBLE
+    LTEXT           "烧录数量：0",IDC_STATIC_NUM,168,250,100,12,NOT WS_VISIBLE
+    PUSHBUTTON      "烧录",IDC_BUTTON_DOWNLOAD,96,290,95,26,NOT WS_VISIBLE | WS_DISABLED,WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_BIN,0,15,241,13,ES_AUTOHSCROLL | ES_READONLY | NOT WS_VISIBLE
+    PUSHBUTTON      "加载文件",IDC_BUTTON_LOAD,14,14,40,13,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR1,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,113,216,24,56
+    LTEXT           "扫描地址：",IDC_STATIC,42,234,41,14,NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT_BTNAME,136,256,143,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_VISIBLE
+    PUSHBUTTON      "Read 512K",IDC_BUTTON_READFLASH,162,39,22,15,NOT WS_VISIBLE | WS_DISABLED
+    PUSHBUTTON      "Chip Erase",IDC_BUTTON_ERASEALL,185,38,22,16,NOT WS_VISIBLE | WS_DISABLED
+    CONTROL         "Progress1",IDC_PR2,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,78,211,24,56
+    CONTROL         "Progress1",IDC_PR4,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,127,210,24,56
+    CONTROL         "Progress1",IDC_PR3,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,86,210,24,56
+    CONTROL         "设备1",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,169,258,36,10
+    CONTROL         "设备2",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,175,76,36,10
+    CONTROL         "设备3",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,173,68,36,10
+    CONTROL         "设备4",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,175,68,36,10
+    ICON            IDI_ICON2,IDC_PIC_RESULT_1,14,256,20,20,NOT WS_VISIBLE
+    ICON            IDI_ICON2,IDC_PIC_RESULT_2,56,256,20,20,NOT WS_VISIBLE
+    ICON            IDI_ICON2,IDC_PIC_RESULT_3,96,256,20,20,NOT WS_VISIBLE
+    ICON            IDI_ICON2,IDC_PIC_RESULT_4,140,256,20,20,NOT WS_VISIBLE
+    PUSHBUTTON      "补烧",IDC_BUTTON_RESET,105,290,95,26,NOT WS_VISIBLE | WS_DISABLED,WS_EX_STATICEDGE
+    LTEXT           "文件检验和：",IDC_STATIC_CRC,143,234,91,12,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR5,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,168,210,24,56
+    CONTROL         "设备5",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,174,242,36,10
+    ICON            IDI_ICON2,IDC_PIC_RESULT_5,178,256,20,20,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR6,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,116,221,24,56
+    CONTROL         "设备6",IDC_CHECK6,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,175,72,36,10
+    ICON            IDI_ICON2,IDC_PIC_RESULT_6,126,267,20,20,NOT WS_VISIBLE
+    LTEXT           "芯片：",IDC_STATIC,189,21,26,11,NOT WS_VISIBLE
+    COMBOBOX        IDC_TARGET,154,19,53,181,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "地址自动加1",IDC_CHECK7,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,160,38,58,8
+    LTEXT           "设备1",IDC_STATIC,10,256,21,10,NOT WS_VISIBLE
+    LTEXT           "设备2",IDC_STATIC,50,256,21,10,NOT WS_VISIBLE
+    LTEXT           "设备3",IDC_STATIC,90,256,21,10,NOT WS_VISIBLE
+    LTEXT           "设备4",IDC_STATIC,130,256,21,10,NOT WS_VISIBLE
+    LTEXT           "设备5",IDC_STATIC,173,256,21,10,NOT WS_VISIBLE
+    LTEXT           "设备6",IDC_STATIC,122,267,21,10,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR7,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,157,221,24,56
+    ICON            IDI_ICON2,IDC_PIC_RESULT_7,167,267,20,20,NOT WS_VISIBLE
+    LTEXT           "设备7",IDC_STATIC,161,267,21,10,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR8,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,198,221,24,56
+    ICON            IDI_ICON2,IDC_PIC_RESULT_8,209,267,20,20,NOT WS_VISIBLE
+    LTEXT           "设备8",IDC_STATIC,115,263,21,10,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR9,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,150,217,24,56
+    ICON            IDI_ICON2,IDC_PIC_RESULT_9,162,263,20,20,NOT WS_VISIBLE
+    LTEXT           "设备9",IDC_STATIC,153,263,21,10,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR10,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,191,216,24,56
+    ICON            IDI_ICON2,IDC_PIC_RESULT_10,203,263,20,20,NOT WS_VISIBLE
+    LTEXT           "设备10",IDC_STATIC,192,263,28,10,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR11,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,11,219,24,56
+    CONTROL         "Progress1",IDC_PR12,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,52,227,24,56
+    CONTROL         "Progress1",IDC_PR13,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,93,208,24,56
+    CONTROL         "Progress1",IDC_PR14,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,134,208,24,56
+    ICON            IDI_ICON2,IDC_PIC_RESULT_11,14,259,20,20,NOT WS_VISIBLE
+    ICON            IDI_ICON2,IDC_PIC_RESULT_12,56,259,20,20,NOT WS_VISIBLE
+    ICON            IDI_ICON2,IDC_PIC_RESULT_13,96,259,20,20,NOT WS_VISIBLE
+    ICON            IDI_ICON2,IDC_PIC_RESULT_14,138,259,20,20,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR15,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,175,208,24,56
+    ICON            IDI_ICON2,IDC_PIC_RESULT_15,178,259,20,20,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR16,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,123,219,24,56
+    ICON            IDI_ICON2,IDC_PIC_RESULT_16,126,270,20,20,NOT WS_VISIBLE
+    LTEXT           "设备11",IDC_STATIC,10,240,28,10,NOT WS_VISIBLE
+    LTEXT           "设备12",IDC_STATIC,50,240,28,10,NOT WS_VISIBLE
+    LTEXT           "设备13",IDC_STATIC,92,240,27,10,NOT WS_VISIBLE
+    LTEXT           "设备14",IDC_STATIC,134,240,26,10,NOT WS_VISIBLE
+    LTEXT           "设备15",IDC_STATIC,176,240,28,10,NOT WS_VISIBLE
+    LTEXT           "设备16",IDC_STATIC,123,207,28,10,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR17,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,164,219,24,56
+    ICON            IDI_ICON2,IDC_PIC_RESULT_17,167,270,20,20,NOT WS_VISIBLE
+    LTEXT           "设备17",IDC_STATIC,164,207,29,10,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR18,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,116,215,24,56
+    ICON            IDI_ICON2,IDC_PIC_RESULT_18,209,270,20,20,NOT WS_VISIBLE
+    LTEXT           "设备18",IDC_STATIC,114,254,29,10,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR19,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,157,215,24,56
+    ICON            IDI_ICON2,IDC_PIC_RESULT_19,162,266,20,20,NOT WS_VISIBLE
+    LTEXT           "设备19",IDC_STATIC,155,254,31,10,NOT WS_VISIBLE
+    CONTROL         "Progress1",IDC_PR20,"msctls_progress32",PBS_SMOOTH | PBS_VERTICAL | NOT WS_VISIBLE | WS_BORDER,198,215,24,56
+    ICON            IDI_ICON2,IDC_PIC_RESULT_20,203,266,20,20,NOT WS_VISIBLE
+    LTEXT           "设备20",IDC_STATIC,196,254,28,10,NOT WS_VISIBLE
+    CONTROL         "加密",IDC_PASSWORD,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,151,41,49,8
+    EDITTEXT        IDC_ID,75,237,145,14,ES_AUTOHSCROLL | NOT WS_VISIBLE
+    LTEXT           "蓝牙名字：",IDC_STATIC,18,58,41,14,NOT WS_VISIBLE
+    EDITTEXT        IDC_INFO,11,15,210,131,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL,WS_EX_DLGMODALFRAME | WS_EX_STATICEDGE
+    EDITTEXT        IDC_INFO2,11,201,211,100,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL,WS_EX_DLGMODALFRAME | WS_EX_STATICEDGE
+    DEFPUSHBUTTON   "读光感值",IDC_BUTTON1,243,138,50,14
+    LTEXT           "入耳结果",IDC_STATIC_NEAR_RESULT,120,161,92,23
+    GROUPBOX        "光感测试结果",IDC_STATIC,9,150,214,40
+    LTEXT           "出耳结果",IDC_STATIC_FAR_RESULT,19,161,92,23
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,1,1,1
+ PRODUCTVERSION 1,1,1,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "Comments", "扫码工具"
+            VALUE "CompanyName", "集贤科技"
+            VALUE "FileDescription", "uascent scan qr tools"
+            VALUE "FileVersion", "1, 1, 1, 1"
+            VALUE "InternalName", "uascent scan qr tools"
+            VALUE "LegalCopyright", "版权所有 (C) UASCENT IOT 2018"
+            VALUE "OriginalFilename", "ua800_scan_qr.exe"
+            VALUE "ProductName", "Scan QR Tools"
+            VALUE "ProductVersion", "1, 1, 1, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 268
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 206
+    END
+
+    IDD_MP_TEST_DIALOG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 316
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 316
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_MP_TEST_DIALOG DLGINIT
+BEGIN
+    IDC_TARGET, 0x403, 7, 0
+0x4b42, 0x3233, 0x3133, "\000" 
+    IDC_TARGET, 0x403, 7, 0
+0x4b42, 0x3433, 0x3133, "\000" 
+    IDC_TARGET, 0x403, 7, 0
+0x4b42, 0x3432, 0x3636, "\000" 
+    IDC_TARGET, 0x403, 7, 0
+0x4b42, 0x3835, 0x3636, "\000" 
+    IDC_TARGET, 0x403, 7, 0
+0x4b42, 0x3532, 0x3333, "\000" 
+    IDC_TARGET, 0x403, 7, 0
+0x4b42, 0x3935, 0x3333, "\000" 
+    IDC_TARGET, 0x403, 7, 0
+0x4b42, 0x3532, 0x3533, "\000" 
+    IDC_TARGET, 0x403, 8, 0
+0x4b42, 0x3233, 0x3133, 0x0053, 
+    IDC_TARGET, 0x403, 12, 0
+0x4b42, 0x3233, 0x3635, 0x6c46, 0x7361, 0x0068, 
+    IDC_TARGET, 0x403, 7, 0
+0x4b42, 0x3233, 0x3635, "\000" 
+    IDC_TARGET, 0x403, 7, 0
+0x4b42, 0x3432, 0x3137, "\000" 
+    IDC_TARGET, 0x403, 7, 0
+0x4941, 0x3036, 0x3036, "\000" 
+    IDC_TARGET, 0x403, 8, 0
+0x4b42, 0x3433, 0x3133, 0x0053, 
+    IDC_TARGET, 0x403, 7, 0
+0x4941, 0x3136, 0x3636, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_ABOUTBOX            "关于工具(&A)..."
+END
+
+#endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE 4, 2
+#pragma code_page(936)
+#endif //_WIN32
+#include "res\mp_test.rc2"  // non-Microsoft Visual C++ edited resources
+#include "l.chs\afxres.rc"          // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
