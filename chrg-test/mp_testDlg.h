@@ -210,6 +210,8 @@ public:
 	int		m_far_high_value;
 	int		m_near_low_value;
 	BOOL	m_racecmd_running;
+	int		m_racecmd_ok_num;
+	int		m_racecmd_ng_num;
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides

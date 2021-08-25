@@ -409,6 +409,9 @@ void CMp_testDlg::DoDataExchange(CDataExchange* pDX)
 	 DDX_Control(pDX, IDC_STATIC_FAR_RESULT, m_far_result);
 
 	 DDX_Control(pDX, IDC_BUTTON1, m_rawdata_button);
+
+	 DDX_Text(pDX, IDC_STATIC_OK_NUM, m_racecmd_ok_num);
+	 DDX_Text(pDX, IDC_STATIC_NG_NUM, m_racecmd_ng_num);
 	//}}AFX_DATA_MAP
 }
 
@@ -700,6 +703,8 @@ BOOL CMp_testDlg::OnInitDialog()
 	m_racecmd_running = FALSE;
 	m_rawdata_stage = 0;
 	m_racecmd_autotest = FALSE;
+	m_racecmd_ok_num = 0;
+	m_racecmd_ng_num = 0;
 
 	int log_flag = 0;
 	int console_flag = 0;
@@ -3333,6 +3338,7 @@ BOOL CMp_testDlg::Do_SendCmd(unsigned int devIndex,BYTE cmd)
 void CMp_testDlg::SendRawCmd()
 {
 	int val;
+	BOOL ret = FALSE;
 
 	m_rawdata_stage = RAW_DATA_STAGE_FAR;
 	val = t5506_send_get_raw_data_2();
@@ -3342,12 +3348,14 @@ void CMp_testDlg::SendRawCmd()
 		m_far_result.SetForeColor(RGB(0, 0, 0));
 		m_far_result.SetWindowText(_T("成功"));
 		m_far_result.SetBkColor(RGB(0, 255, 0));
+		ret = TRUE;
 	}
 	else
 	{
 		m_far_result.SetForeColor(RGB(0, 0, 0));
 		m_far_result.SetWindowText(_T("失败"));
 		m_far_result.SetBkColor(RGB(255,0, 0));
+		ret = FALSE;
 	}
 
 	//AfxMessageBox(_T("请挡住光感"));
@@ -3368,8 +3376,10 @@ void CMp_testDlg::SendRawCmd()
 		m_near_result.SetForeColor(RGB(0, 0, 0));
 		m_near_result.SetWindowText(_T("失败"));
 		m_near_result.SetBkColor(RGB(255, 0, 0));
+		ret = FALSE;
 	}
 
+	
 	if (m_gpib_power)
 	{
 		int ret;
@@ -3387,6 +3397,16 @@ void CMp_testDlg::SendRawCmd()
 		SetTimer(TIMER_ID_RACECMD_AUTOTEST, 5000, NULL);
 	}
 
+	if (ret)
+	{
+		m_racecmd_ok_num++;
+	}
+	else
+	{
+		m_racecmd_ng_num++;
+	}
+
+	UpdateData(FALSE);
 }
 
 
