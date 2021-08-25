@@ -216,9 +216,17 @@ void do_onewire_frame_rsp(onewire_frame_t *pframe)
 	{
 		if (pframe->event == PSENSOR_GET_RAW_DATA)
 		{
-			rsp_value = pframe->param[2];
-			rsp_value <<= 8;
-			rsp_value |= pframe->param[1];
+			if (pframe->param[0] == FALSE)
+			{
+				rsp_value = RAW_DATA_VALUE_ERROR;
+			}
+			else
+			{
+				rsp_value = pframe->param[2];
+				rsp_value <<= 8;
+				rsp_value |= pframe->param[1];
+			}
+	
 
 			Log_d(_T("raw data=%x(%d)"), rsp_value, rsp_value);
 		}
@@ -389,7 +397,7 @@ void dlg_update_status_ui(int rcv_count, int snd_cnt, int value, const CString& 
 	if (value >= 0)
 	{
 		CString prompt;
-		prompt.Format(_T("\r\n收到包:%d, 发送包:%d，光感值：0x%x\r\n"), rcv_count, snd_cnt, value);
+		prompt.Format(_T("\r\n收到包:%d, 发送包:%d，光感值：0x%x(%d)\r\n"), rcv_count, snd_cnt, value, value);
 
 		pResult = new CString(prompt);
 	}
@@ -453,7 +461,17 @@ int t5506_send_get_raw_data_2()
 		return 0;
 	}
 	val = rsp_value;
-	CString info(_T("读取光感值正确！"));
+	CString info;
+
+	if (val == RAW_DATA_VALUE_ERROR)
+	{
+		info = _T("光感通信错误");
+	}
+	else
+	{
+		info = _T("读取光感值正确！");
+	}
+	 
 
 	dlg_update_status_ui(rcv_count, snd_count, val, info);
 

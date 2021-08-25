@@ -108,14 +108,18 @@ UINT64 id_save_buf[MULTI_USB_DEVICE_MAXNUM];
 const UINT CMp_testDlg::TIMER_ID_TEST_MODE = 100;
 
 #define TIMER_ID_TURN_ON_POWER		1005
+#define TIMER_ID_RACECMD_AUTOTEST	1006
+#define TIMER_ID_AUTOCLOSE_MSGBOX	1007
 
 DWORD WINAPI StartWriteLicense(LPVOID lParam);
 
 // 版本信息/客户名称/平台
-const CString customer_name = _T("test ");
-const CString platform_name = _T("test ");
-const CString program_version = _T("V1.0 @") __TIMESTAMP__ _T(" ");
+const CString customer_name = _T("lchse ");
+const CString platform_name = _T("airoha ");
+const CString program_version = _T("V2.0 @") __TIMESTAMP__ _T(" ");
 const CString release_note = _T("test");
+
+#define PSENSOR_MSGBOX_TITLE	_T("光感")
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
@@ -428,6 +432,7 @@ BEGIN_MESSAGE_MAP(CMp_testDlg, CDialog)
     ON_EN_CHANGE(IDC_ID,OnEnChangeEdit)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTON1, &CMp_testDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_CHECK_AUTOTEST, &CMp_testDlg::OnBnClickedCheckAutotest)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -522,6 +527,22 @@ void CMp_testDlg::OnTimer(UINT nIDEvent)
    {
 	   KillTimer(TIMER_ID_TURN_ON_POWER);
 	   SendRawCmd();
+   }
+   else if (nIDEvent == TIMER_ID_RACECMD_AUTOTEST)
+   {
+	   KillTimer(TIMER_ID_RACECMD_AUTOTEST);
+	   OnBnClickedButton1();
+   }
+   else if (nIDEvent == TIMER_ID_AUTOCLOSE_MSGBOX)
+   {
+	   KillTimer(TIMER_ID_AUTOCLOSE_MSGBOX);
+
+	   HANDLE hWnd = ::FindWindowEx(NULL, NULL, NULL, PSENSOR_MSGBOX_TITLE);
+	   if (hWnd)
+	   {
+		   Log_d(_T("find my prompt window\n"));
+		   ::SendMessage((HWND)hWnd, WM_CLOSE, NULL, NULL);
+	   }
    }
 }
 
@@ -678,6 +699,7 @@ BOOL CMp_testDlg::OnInitDialog()
 
 	m_racecmd_running = FALSE;
 	m_rawdata_stage = 0;
+	m_racecmd_autotest = FALSE;
 
 	int log_flag = 0;
 	int console_flag = 0;
@@ -3328,7 +3350,10 @@ void CMp_testDlg::SendRawCmd()
 		m_far_result.SetBkColor(RGB(255,0, 0));
 	}
 
-	AfxMessageBox(_T("请挡住光感"));
+	//AfxMessageBox(_T("请挡住光感"));
+	SetTimer(TIMER_ID_AUTOCLOSE_MSGBOX, 5000, NULL);
+	MessageBox(_T("请挡住光感"), PSENSOR_MSGBOX_TITLE, MB_OK);
+
 	m_rawdata_stage = RAW_DATA_STATE_NEAR;
 	val = t5506_send_get_raw_data_2();
 
@@ -3347,11 +3372,20 @@ void CMp_testDlg::SendRawCmd()
 
 	if (m_gpib_power)
 	{
-		PSUSetting(Condition_OFF);
+		int ret;
+
+		ret = PSUSetting(Condition_OFF);
+		Log_d(_T("psu setting off =%d"), ret);
 	}
 	
 	m_racecmd_running = FALSE;
 	m_rawdata_button.EnableWindow(TRUE);
+
+	if (m_racecmd_autotest)
+	{
+		//OnBnClickedButton1();
+		SetTimer(TIMER_ID_RACECMD_AUTOTEST, 5000, NULL);
+	}
 
 }
 
@@ -3370,7 +3404,10 @@ void CMp_testDlg::OnBnClickedButton1()
 
 	if (m_gpib_power)
 	{
-		PSUSetting(Condition_ON);
+		int ret ;
+
+		ret = PSUSetting(Condition_ON);
+		Log_d(_T("psu setting on =%d"), ret);
 	}
 
 	m_result_text = _T("");
@@ -3386,4 +3423,22 @@ void CMp_testDlg::OnBnClickedButton1()
 	
 	m_near_result.SetForeColor(RGB(255, 255, 255));
 	m_near_result.SetBkColor(RGB(128, 128, 128));
+}
+
+
+void CMp_testDlg::OnBnClickedCheckAutotest()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CButton *pWnd = (CButton *)GetDlgItem(IDC_CHECK_AUTOTEST);
+	m_racecmd_autotest = pWnd->GetCheck();
+
+	if (!m_racecmd_running && m_racecmd_autotest)
+	{
+		OnBnClickedButton1();
+	}
+
+	if (m_racecmd_autotest == 0)
+	{
+		KillTimer(TIMER_ID_RACECMD_AUTOTEST);
+	}
 }

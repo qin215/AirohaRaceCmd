@@ -181,6 +181,7 @@ public:
 
 	CButton	m_rawdata_button;
 	int		m_rawdata_stage;	
+	BOOL	m_racecmd_autotest;
 
 	CEdit m_edit;
 
@@ -249,6 +250,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedCheckAutotest();
 };
 
 //{{AFX_INSERT_LOCATION}}
