@@ -23,7 +23,7 @@
 static HANDLE hRaceCmdEvent = INVALID_HANDLE_VALUE;
 static kal_uint16 s_race_cmd;
 
-#define T5506_RACECMD_SEND_COUNT	5
+#define T5506_RACECMD_SEND_COUNT	3
 //#define T5506_CMD_CLOSE_LOG			0x5000
 
 #ifdef VERSION_V1
@@ -95,6 +95,9 @@ enum _RACE_CMD_ENUM
 
 	PSENSOR_GET_CALI_DATA = 0X30,
 	PSENSOR_GET_RAW_DATA = 0x31,
+
+	PSENSOR_SYSTEM_CMD = 0X100,
+	PSENSOR_HW_RESET 
 };
 
 #define T5506_CMD_GET_RAW_DATA_HIGH	PSENSOR_GET_RAW_DATA_HIGH
@@ -227,7 +230,6 @@ void do_onewire_frame_rsp(onewire_frame_t *pframe)
 				rsp_value |= pframe->param[1];
 			}
 	
-
 			Log_d(_T("raw data=%x(%d)"), rsp_value, rsp_value);
 		}
 		else
@@ -306,19 +308,36 @@ static buf_t * t5506_build_race_cmd(buf_t *b, kal_uint16 race_cmd)
 	kal_uint8 *pbuf = NULL;
 
 	kal_uint8 ps_raw_data[] = {0x05, 0x5A, 0x05, 0x00 ,0x06 ,0x0E ,0x00, 0x0B, 0x20};
+	kal_uint8 reset_cmd[] = {0x05, 0x5C, 0x02, 0x00, 0x06, 0x02};
 
 	onewire_frame_t *pframe = (onewire_frame_t *)ps_raw_data;
 
-	if (!g_old_version)
+	if (race_cmd < PSENSOR_SYSTEM_CMD)
 	{
-		pframe->cmd = T5506_CMD_GET_RAW_DATA;
-	}
-	
-	pframe->event = race_cmd;
-	pframe->param[0] = race_cmd;
+		if (!g_old_version)
+		{
+			pframe->cmd = T5506_CMD_GET_RAW_DATA;
+		}
 
-	pbuf = ps_raw_data;
-	b->len = sizeof(ps_raw_data);
+		pframe->event = race_cmd;
+		pframe->param[0] = race_cmd;
+
+		pbuf = ps_raw_data;
+		b->len = sizeof(ps_raw_data);
+	}
+	else
+	{
+		if (race_cmd == PSENSOR_HW_RESET)
+		{
+			pbuf = reset_cmd;
+			b->len = sizeof(reset_cmd);
+		}
+		else
+		{
+			ASSERT(FALSE);
+		}
+	}
+
 	memcpy(b->pbuff, pbuf, b->len);
 
 	return b;
@@ -476,4 +495,40 @@ int t5506_send_get_raw_data_2()
 	dlg_update_status_ui(rcv_count, snd_count, val, info);
 
 	return val;
+}
+
+
+/*
+ *
+ */
+void t5506_send_reset_cmd()
+{
+	if (!t5506_send_race_cmd(PSENSOR_HW_RESET))
+	{
+
+	}
+}
+
+void t5506_send_factory_reset_cmd()
+{
+	if (!t5506_send_race_cmd(PSENSOR_RACE_RESET_FACTORY))
+	{
+		CString info(_T("恢复出厂设置错误！"));
+		dlg_update_status_ui(rcv_count, snd_count, RAW_DATA_VALUE_ERROR, info);
+		return;
+	}
+
+	CString info;
+	int val = rsp_value;
+	if (rsp_value == 1)
+	{
+		info = _T("恢复出厂设置OK");
+	}
+	else
+	{
+		info = _T("恢复出厂设置错误！");
+	}
+
+
+	dlg_update_status_ui(rcv_count, snd_count, val, info);
 }

@@ -70,6 +70,10 @@ int t5506_send_get_raw_data();
 
 int t5506_send_get_raw_data_2();
 
+void t5506_send_reset_cmd();
+
+void t5506_send_factory_reset_cmd();
+
 #ifdef __cplusplus
 }
 #endif

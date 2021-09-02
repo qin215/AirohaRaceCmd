@@ -1,9 +1,5 @@
 //#include "extcode.h"
-
-#include "ServerCmd.h"
-#include "data_buff.h"
 #include <stdint.h>
-
 #pragma pack(push)
 #pragma pack(1)
 
@@ -13,13 +9,16 @@ extern "C" {
 typedef uint16_t  Condition;
 #define Condition_ON 0
 #define Condition_OFF 1
+typedef uint16_t  Equipment;
+#define Equipment__66319D 0
+#define Equipment__2306 1
 
 /*!
- * PSUSetting
+ * PSUSettingV2
  */
-int16_t __stdcall PSUSetting(Condition condition);
+int16_t __stdcall PSUSettingV2(Condition condition, Equipment equipmentID);
 
-//MgErr __cdecl LVDLLStatus(char *errStr, int errStrLen, void *module);
+int __cdecl LVDLLStatus(char *errStr, int errStrLen, void *module);
 
 #ifdef __cplusplus
 } // extern "C"

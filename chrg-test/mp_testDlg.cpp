@@ -44,6 +44,9 @@ static char THIS_FILE[] = __FILE__;
 #define TIMER_EVENT_RESET		1
 #define TIMER_EVENT_CHIPTEST	2
 
+#define KEYSIGHT_66319D		0
+#define KEITHLEY_2306		1
+
 int PicWidgetList[MULTI_USB_DEVICE_MAXNUM]= {IDC_PIC_RESULT_1, IDC_PIC_RESULT_2, IDC_PIC_RESULT_3,IDC_PIC_RESULT_4, IDC_PIC_RESULT_5, IDC_PIC_RESULT_6,
 IDC_PIC_RESULT_7,IDC_PIC_RESULT_8,IDC_PIC_RESULT_9,IDC_PIC_RESULT_10,IDC_PIC_RESULT_11,IDC_PIC_RESULT_12,
 IDC_PIC_RESULT_13,IDC_PIC_RESULT_14,IDC_PIC_RESULT_15,IDC_PIC_RESULT_16,IDC_PIC_RESULT_17,IDC_PIC_RESULT_18,
@@ -120,6 +123,8 @@ const CString program_version = _T("V2.0 @") __TIMESTAMP__ _T(" ");
 const CString release_note = _T("test");
 
 #define PSENSOR_MSGBOX_TITLE	_T("光感")
+
+CString prompt_title;
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
@@ -540,7 +545,7 @@ void CMp_testDlg::OnTimer(UINT nIDEvent)
    {
 	   KillTimer(TIMER_ID_AUTOCLOSE_MSGBOX);
 
-	   HANDLE hWnd = ::FindWindowEx(NULL, NULL, NULL, PSENSOR_MSGBOX_TITLE);
+	   HANDLE hWnd = ::FindWindowEx(NULL, NULL, NULL, prompt_title);
 	   if (hWnd)
 	   {
 		   Log_d(_T("find my prompt window\n"));
@@ -706,6 +711,8 @@ BOOL CMp_testDlg::OnInitDialog()
 	m_racecmd_ok_num = 0;
 	m_racecmd_ng_num = 0;
 
+	prompt_title.Format(_T("%s-%d"), PSENSOR_MSGBOX_TITLE, GetCurrentProcessId());
+
 	int log_flag = 0;
 	int console_flag = 0;
 	if (!get_config_int_value(_TEXT("debug"), _TEXT("log"), &log_flag, 0))
@@ -731,6 +738,15 @@ BOOL CMp_testDlg::OnInitDialog()
 	if (!get_config_int_value(_TEXT("setting"), _TEXT("gpib_power"), &m_gpib_power, 0))
 	{
 		m_gpib_power = 0;
+	}
+
+
+	if (m_gpib_power == 1)
+	{
+		if (!get_config_int_value(_TEXT("setting"), _TEXT("gpib_type"), &m_power_type, 0))
+		{
+			m_power_type = KEYSIGHT_66319D;
+		}
 	}
 
 	if (!get_config_int_value(_TEXT("setting"), _TEXT("far_high_value"), &m_far_high_value, 2000))
@@ -3339,28 +3355,42 @@ void CMp_testDlg::SendRawCmd()
 {
 	int val;
 	BOOL ret = FALSE;
+	int i;
+
+	//t5506_send_reset_cmd();
+	t5506_send_factory_reset_cmd();
+
+	SetTimer(TIMER_ID_AUTOCLOSE_MSGBOX, 4000, NULL);
+	MessageBox(_T("复位中..."), prompt_title, MB_OK);
 
 	m_rawdata_stage = RAW_DATA_STAGE_FAR;
-	val = t5506_send_get_raw_data_2();
 
-	if (val >= 0 && val <= m_far_high_value)
+	for (i = 0; i < 5; i++)
 	{
-		m_far_result.SetForeColor(RGB(0, 0, 0));
-		m_far_result.SetWindowText(_T("成功"));
-		m_far_result.SetBkColor(RGB(0, 255, 0));
-		ret = TRUE;
-	}
-	else
-	{
-		m_far_result.SetForeColor(RGB(0, 0, 0));
-		m_far_result.SetWindowText(_T("失败"));
-		m_far_result.SetBkColor(RGB(255,0, 0));
-		ret = FALSE;
-	}
+		val = t5506_send_get_raw_data_2();
 
+		if (val > 0 && val <= m_far_high_value)
+		{
+			m_far_result.SetForeColor(RGB(0, 0, 0));
+			m_far_result.SetWindowText(_T("成功"));
+			m_far_result.SetBkColor(RGB(0, 255, 0));
+			ret = TRUE;
+
+			break;
+		}
+		else
+		{
+			m_far_result.SetForeColor(RGB(0, 0, 0));
+			m_far_result.SetWindowText(_T("失败"));
+			m_far_result.SetBkColor(RGB(255,0, 0));
+			ret = FALSE;
+		}
+	}
+	
+
+#if 0
 	//AfxMessageBox(_T("请挡住光感"));
-	SetTimer(TIMER_ID_AUTOCLOSE_MSGBOX, 5000, NULL);
-	MessageBox(_T("请挡住光感"), PSENSOR_MSGBOX_TITLE, MB_OK);
+
 
 	m_rawdata_stage = RAW_DATA_STATE_NEAR;
 	val = t5506_send_get_raw_data_2();
@@ -3379,12 +3409,21 @@ void CMp_testDlg::SendRawCmd()
 		ret = FALSE;
 	}
 
-	
+#endif	
 	if (m_gpib_power)
 	{
-		int ret;
+		int ret = 0;
 
-		ret = PSUSetting(Condition_OFF);
+		if (m_power_type == KEYSIGHT_66319D)
+		{
+		//	ret = PSUSetting(Condition_OFF);
+			ret = PSUSettingV2(Condition_OFF, Equipment__66319D);
+		}
+		else
+		{
+			ret = PSUSettingV2(Condition_OFF, Equipment__2306);
+		}
+
 		Log_d(_T("psu setting off =%d"), ret);
 	}
 	
@@ -3394,7 +3433,7 @@ void CMp_testDlg::SendRawCmd()
 	if (m_racecmd_autotest)
 	{
 		//OnBnClickedButton1();
-		SetTimer(TIMER_ID_RACECMD_AUTOTEST, 5000, NULL);
+		SetTimer(TIMER_ID_RACECMD_AUTOTEST, 1000, NULL);
 	}
 
 	if (ret)
@@ -3424,15 +3463,24 @@ void CMp_testDlg::OnBnClickedButton1()
 
 	if (m_gpib_power)
 	{
-		int ret ;
+		int ret = 0;
 
-		ret = PSUSetting(Condition_ON);
+		if (m_power_type == KEYSIGHT_66319D)
+		{
+			ret = PSUSettingV2(Condition_ON, Equipment__66319D);
+		}
+		else
+		{
+			ret = PSUSettingV2(Condition_ON, Equipment__2306);
+		}
+
+		
 		Log_d(_T("psu setting on =%d"), ret);
 	}
 
 	m_result_text = _T("");
 	
-	SetTimer(TIMER_ID_TURN_ON_POWER, 3000, NULL);		// 2s 定时器等待开机
+	SetTimer(TIMER_ID_TURN_ON_POWER, 500, NULL);		// 2s 定时器等待开机
 
 	m_far_result.SetWindowText(_T("出耳光感结果"));
 	

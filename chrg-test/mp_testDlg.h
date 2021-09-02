@@ -207,6 +207,7 @@ public:
 	BOOL	m_db_support;		//  «∑Ò÷ß≥÷database.
 
 	BOOL	m_gpib_power;
+	int		m_power_type;
 	int		m_far_high_value;
 	int		m_near_low_value;
 	BOOL	m_racecmd_running;
