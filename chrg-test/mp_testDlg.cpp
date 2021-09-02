@@ -3355,17 +3355,18 @@ void CMp_testDlg::SendRawCmd()
 {
 	int val;
 	BOOL ret = FALSE;
+	BOOL near_ret = FALSE;
 	int i;
 
 	//t5506_send_reset_cmd();
-	t5506_send_factory_reset_cmd();
+	//t5506_send_factory_reset_cmd();
 
-	SetTimer(TIMER_ID_AUTOCLOSE_MSGBOX, 4000, NULL);
-	MessageBox(_T("复位中..."), prompt_title, MB_OK);
+	//SetTimer(TIMER_ID_AUTOCLOSE_MSGBOX, 3000, NULL);
+	//MessageBox(_T("复位中..."), prompt_title, MB_OK);
 
 	m_rawdata_stage = RAW_DATA_STAGE_FAR;
 
-	for (i = 0; i < 5; i++)
+	for (i = 0; i < 3; i++)
 	{
 		val = t5506_send_get_raw_data_2();
 
@@ -3388,43 +3389,52 @@ void CMp_testDlg::SendRawCmd()
 	}
 	
 
-#if 0
+#if 1
 	//AfxMessageBox(_T("请挡住光感"));
-
+	SetTimer(TIMER_ID_AUTOCLOSE_MSGBOX, 3000, NULL);
+	MessageBox(_T("请挡住光感..."), prompt_title, MB_OK);
 
 	m_rawdata_stage = RAW_DATA_STATE_NEAR;
-	val = t5506_send_get_raw_data_2();
 
-	if (val >= m_near_low_value && val <= 65535)
+	for (i = 0; i < 3; i++)
 	{
-		m_near_result.SetForeColor(RGB(0, 0, 0));
-		m_near_result.SetWindowText(_T("成功"));
-		m_near_result.SetBkColor(RGB(0, 255, 0));
+		val = t5506_send_get_raw_data_2();
+
+		if (val >= m_near_low_value && val <= 65535)
+		{
+			m_near_result.SetForeColor(RGB(0, 0, 0));
+			m_near_result.SetWindowText(_T("成功"));
+			m_near_result.SetBkColor(RGB(0, 255, 0));
+			near_ret = TRUE;
+			break;
+		}
+		else
+		{
+			m_near_result.SetForeColor(RGB(0, 0, 0));
+			m_near_result.SetWindowText(_T("失败"));
+			m_near_result.SetBkColor(RGB(255, 0, 0));
+			near_ret = FALSE;
+		}
 	}
-	else
-	{
-		m_near_result.SetForeColor(RGB(0, 0, 0));
-		m_near_result.SetWindowText(_T("失败"));
-		m_near_result.SetBkColor(RGB(255, 0, 0));
-		ret = FALSE;
-	}
+
+	ret = ret && near_ret;
 
 #endif	
 	if (m_gpib_power)
 	{
-		int ret = 0;
+		int ret2 = 0;
 
 		if (m_power_type == KEYSIGHT_66319D)
 		{
 		//	ret = PSUSetting(Condition_OFF);
-			ret = PSUSettingV2(Condition_OFF, Equipment__66319D);
+			ret2 = PSUSettingV2(Condition_OFF, Equipment__66319D);
 		}
 		else
 		{
-			ret = PSUSettingV2(Condition_OFF, Equipment__2306);
+			ret2 = PSUSettingV2(Condition_OFF, Equipment__2306);
 		}
 
-		Log_d(_T("psu setting off =%d"), ret);
+		Log_d(_T("psu setting off =%d"), ret2);
 	}
 	
 	m_racecmd_running = FALSE;
