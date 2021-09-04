@@ -108,6 +108,8 @@ unsigned int gb_crc;
 unsigned char gb_AddrTab[MULTI_USB_DEVICE_MAXNUM][6];
 UINT64 id_save_buf[MULTI_USB_DEVICE_MAXNUM];
 
+UINT  StartSendUartCmd(LPVOID lParam);
+
 const UINT CMp_testDlg::TIMER_ID_TEST_MODE = 100;
 
 #define TIMER_ID_TURN_ON_POWER		1005
@@ -433,6 +435,7 @@ BEGIN_MESSAGE_MAP(CMp_testDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_ADDTSET, OnButtonAddtset)
 	ON_BN_CLICKED(IDC_BUTTON_DEVNAMESET, OnButtonBtNameSet)
 	ON_MESSAGE(WM_UPDATE_STATIC, OnUpdateStatic)  
+	ON_MESSAGE(WM_UPDATE_THREAD_RESULT, OnGetThreadResult)
 	ON_WM_TIMER()
 	ON_WM_DEVICECHANGE()
 	ON_WM_CLOSE()
@@ -796,8 +799,14 @@ BOOL CMp_testDlg::OnInitDialog()
 	version += release_note;
 	CString str;
 
-	str.Format("\n\nLog:%d, db:%d, console:%d, gpib=%d, far_high_value=%d, near_low_value=%d\n", 
-		log_flag, db_enable, console_flag, m_gpib_power, m_far_high_value, m_near_low_value);
+	int power_supply_support = 0;
+
+#ifdef POWER_SUPPLY_SUPPORT
+	power_supply_support = 1;
+#endif
+
+	str.Format("\n\nLog:%d, db:%d, console:%d, gpib=%d, far_high_value=%d, near_low_value=%d, power-supply=%d\n", 
+		log_flag, db_enable, console_flag, m_gpib_power, m_far_high_value, m_near_low_value, power_supply_support);
 	version += str;
 
 	Log_d("init version & feature:%s", version.GetBuffer());
@@ -3353,63 +3362,90 @@ BOOL CMp_testDlg::Do_SendCmd(unsigned int devIndex,BYTE cmd)
 
 void CMp_testDlg::SendRawCmd()
 {
+#if 1
+	win32_start_thread(StartSendUartCmd, this);
+#else
 	int val;
-	BOOL ret = FALSE;
+	BOOL outear_status = FALSE;
+	BOOL inear_stauts = FALSE;
 	int i;
 
-	//t5506_send_reset_cmd();
-	t5506_send_factory_reset_cmd();
-
-	SetTimer(TIMER_ID_AUTOCLOSE_MSGBOX, 4000, NULL);
-	MessageBox(_T("复位中..."), prompt_title, MB_OK);
+	t5506_send_out_ear_cali_cmd();
 
 	m_rawdata_stage = RAW_DATA_STAGE_FAR;
 
 	for (i = 0; i < 5; i++)
 	{
-		val = t5506_send_get_raw_data_2();
+		val = t5506_query_cali_status();
 
-		if (val > 0 && val <= m_far_high_value)
-		{
-			m_far_result.SetForeColor(RGB(0, 0, 0));
-			m_far_result.SetWindowText(_T("成功"));
-			m_far_result.SetBkColor(RGB(0, 255, 0));
-			ret = TRUE;
-
-			break;
-		}
-		else
+		if (val == PSENSOR_QUERY_CALI_FAIL)
 		{
 			m_far_result.SetForeColor(RGB(0, 0, 0));
 			m_far_result.SetWindowText(_T("失败"));
 			m_far_result.SetBkColor(RGB(255,0, 0));
-			ret = FALSE;
-		}
-	}
+
 	
+			break;
+		}
+		else if (val == PSENSOR_QUERY_CALI_DOING)
+		{
+			m_far_result.SetForeColor(RGB(0, 0, 0));
+			m_far_result.SetWindowText(_T("运行中...."));
+			m_far_result.SetBkColor(RGB(0, 255, 0));
+			
+		}
+		else
+		{
+			m_far_result.SetForeColor(RGB(0, 0, 0));
+			m_far_result.SetWindowText(_T("出耳校准成功"));
+			m_far_result.SetBkColor(RGB(0, 255, 0));
+			outear_status = TRUE;
 
-#if 0
-	//AfxMessageBox(_T("请挡住光感"));
+			break;
+		}
 
+		Sleep(1000);
+	}
+
+	SetTimer(TIMER_ID_AUTOCLOSE_MSGBOX, 1000, NULL);
+	MessageBox(_T("校准入耳..."), prompt_title, MB_OK);
 
 	m_rawdata_stage = RAW_DATA_STATE_NEAR;
-	val = t5506_send_get_raw_data_2();
+	t5506_send_in_ear_cali_cmd();
 
-	if (val >= m_near_low_value && val <= 65535)
+	for (i = 0; i < 5; i++)
 	{
-		m_near_result.SetForeColor(RGB(0, 0, 0));
-		m_near_result.SetWindowText(_T("成功"));
-		m_near_result.SetBkColor(RGB(0, 255, 0));
-	}
-	else
-	{
-		m_near_result.SetForeColor(RGB(0, 0, 0));
-		m_near_result.SetWindowText(_T("失败"));
-		m_near_result.SetBkColor(RGB(255, 0, 0));
-		ret = FALSE;
+		val = t5506_query_cali_status();
+
+		if (val == PSENSOR_QUERY_CALI_FAIL)
+		{
+			m_near_result.SetForeColor(RGB(0, 0, 0));
+			m_near_result.SetWindowText(_T("失败"));
+			m_near_result.SetBkColor(RGB(255,0, 0));
+		
+
+			break;
+		}
+		else if (val == PSENSOR_QUERY_CALI_DOING)
+		{
+			m_near_result.SetForeColor(RGB(0, 0, 0));
+			m_near_result.SetWindowText(_T("运行中...."));
+			m_near_result.SetBkColor(RGB(0, 255, 0));
+		}
+		else
+		{
+			m_near_result.SetForeColor(RGB(0, 0, 0));
+			m_near_result.SetWindowText(_T("入耳校准成功"));
+			m_near_result.SetBkColor(RGB(0, 255, 0));
+			inear_stauts = TRUE;
+
+			break;
+		}
+
+		Sleep(1000);
 	}
 
-#endif	
+#ifdef POWER_SUPPLY_SUPPORT
 	if (m_gpib_power)
 	{
 		int ret = 0;
@@ -3426,7 +3462,8 @@ void CMp_testDlg::SendRawCmd()
 
 		Log_d(_T("psu setting off =%d"), ret);
 	}
-	
+#endif
+
 	m_racecmd_running = FALSE;
 	m_rawdata_button.EnableWindow(TRUE);
 
@@ -3436,7 +3473,7 @@ void CMp_testDlg::SendRawCmd()
 		SetTimer(TIMER_ID_RACECMD_AUTOTEST, 1000, NULL);
 	}
 
-	if (ret)
+	if (inear_stauts && outear_status)
 	{
 		m_racecmd_ok_num++;
 	}
@@ -3446,6 +3483,7 @@ void CMp_testDlg::SendRawCmd()
 	}
 
 	UpdateData(FALSE);
+#endif
 }
 
 
@@ -3460,7 +3498,7 @@ void CMp_testDlg::OnBnClickedButton1()
 	m_racecmd_running = TRUE;
 	m_rawdata_button.EnableWindow(FALSE);
 
-
+#ifdef POWER_SUPPLY_SUPPORT
 	if (m_gpib_power)
 	{
 		int ret = 0;
@@ -3477,17 +3515,18 @@ void CMp_testDlg::OnBnClickedButton1()
 		
 		Log_d(_T("psu setting on =%d"), ret);
 	}
+#endif
 
 	m_result_text = _T("");
 	
 	SetTimer(TIMER_ID_TURN_ON_POWER, 500, NULL);		// 2s 定时器等待开机
 
-	m_far_result.SetWindowText(_T("出耳光感结果"));
+	m_far_result.SetWindowText(_T("出耳校准"));
 	
 	m_far_result.SetForeColor(RGB(255, 255, 255));
 	m_far_result.SetBkColor(RGB(128, 128, 128));
 
-	m_near_result.SetWindowText(_T("入耳光感结果"));
+	m_near_result.SetWindowText(_T("入耳校准"));
 	
 	m_near_result.SetForeColor(RGB(255, 255, 255));
 	m_near_result.SetBkColor(RGB(128, 128, 128));
@@ -3509,4 +3548,247 @@ void CMp_testDlg::OnBnClickedCheckAutotest()
 	{
 		KillTimer(TIMER_ID_RACECMD_AUTOTEST);
 	}
+}
+
+
+/*
+ *  子线程中传递回来的运行状态
+ */
+#define STATUS_FAR_BEGIN			0
+#define STATUS_FAR_DOING			1
+#define STATUS_FAR_FAILED			2
+#define STATUS_FAR_SUCCESS			3
+#define STATUS_WAIT_PROMPT			4
+#define STATUS_NEAR_BEGIN			5
+#define STATUS_NEAR_DOING			6
+#define STATUS_NEAR_FAILED			7
+#define STATUS_NEAR_SUCCESS			8
+#define STATUS_ALL_DONE				9
+
+
+LRESULT CMp_testDlg::OnGetThreadResult(WPARAM wParam, LPARAM lParam)
+{
+	int status = wParam;
+	static BOOL outear_status;
+	static BOOL inear_stauts;
+
+	switch (status)
+	{
+	case STATUS_FAR_BEGIN:
+		{
+			outear_status = FALSE;
+			break;
+		}
+
+
+	case STATUS_FAR_DOING:
+		{
+			m_far_result.SetForeColor(RGB(0, 0, 0));
+			m_far_result.SetWindowText(_T("运行中...."));
+			m_far_result.SetBkColor(RGB(0, 255, 0));
+
+			break;
+		}
+	
+
+	case STATUS_FAR_FAILED:
+		{
+			m_far_result.SetForeColor(RGB(0, 0, 0));
+			m_far_result.SetWindowText(_T("失败"));
+			m_far_result.SetBkColor(RGB(255,0, 0));
+			break;
+		}
+		
+
+	case STATUS_FAR_SUCCESS:
+		{
+			m_far_result.SetForeColor(RGB(0, 0, 0));
+			m_far_result.SetWindowText(_T("出耳校准成功"));
+			m_far_result.SetBkColor(RGB(0, 255, 0));
+			outear_status = TRUE;
+
+			break;
+		}
+		
+
+	case STATUS_WAIT_PROMPT:
+		{
+			SetTimer(TIMER_ID_AUTOCLOSE_MSGBOX, 2000, NULL);
+			MessageBox(_T("校准入耳..."), prompt_title, MB_OK);
+
+			m_event.SetEvent();
+
+			break;
+		}
+		
+	case STATUS_NEAR_BEGIN:
+		{
+			inear_stauts = FALSE;
+			break;
+		}
+		
+
+	case STATUS_NEAR_DOING:
+		{
+			m_near_result.SetForeColor(RGB(0, 0, 0));
+			m_near_result.SetWindowText(_T("运行中...."));
+			m_near_result.SetBkColor(RGB(0, 255, 0));
+
+			break;
+		}
+		
+
+	case STATUS_NEAR_FAILED:
+		{
+			m_near_result.SetForeColor(RGB(0, 0, 0));
+			m_near_result.SetWindowText(_T("失败"));
+			m_near_result.SetBkColor(RGB(255, 0, 0));
+
+			break;
+		}
+		
+
+	case STATUS_NEAR_SUCCESS:
+		{
+			m_near_result.SetForeColor(RGB(0, 0, 0));
+			m_near_result.SetWindowText(_T("入耳校准成功"));
+			m_near_result.SetBkColor(RGB(0, 255, 0));
+
+			inear_stauts = TRUE;
+
+			break;
+		}
+		
+
+	case STATUS_ALL_DONE:
+		{
+			m_racecmd_running = FALSE;
+			m_rawdata_button.EnableWindow(TRUE);
+
+			if (m_racecmd_autotest)
+			{
+				SetTimer(TIMER_ID_RACECMD_AUTOTEST, 1000, NULL);
+			}
+
+			if (inear_stauts && outear_status)
+			{
+				m_racecmd_ok_num++;
+			}
+			else
+			{
+				m_racecmd_ng_num++;
+			}
+
+			UpdateData(FALSE);
+
+			break;
+		}
+		
+
+	default:
+		break;
+	}
+
+	return 0;
+}
+
+UINT  StartSendUartCmd(LPVOID lParam)
+{
+	CMp_testDlg * pDlg = (CMp_testDlg *)lParam;
+	CWnd* cwnd;
+
+	int val;
+	BOOL outear_status = FALSE;
+	BOOL inear_stauts = FALSE;
+	int i;
+
+	::PostMessage(pDlg->m_hWnd, WM_UPDATE_THREAD_RESULT, STATUS_FAR_BEGIN, 0);
+
+	for (i = 0; i < 5; i++)
+	{
+		if (t5506_send_out_ear_cali_cmd())
+		{
+			break;
+		}
+	}
+	
+
+	pDlg->m_rawdata_stage = RAW_DATA_STAGE_FAR;
+
+	for (i = 0; i < 5; i++)
+	{
+		val = t5506_query_cali_status();
+		if (val == PSENSOR_QUERY_CALI_FAIL)
+		{
+			::PostMessage(pDlg->m_hWnd, WM_UPDATE_THREAD_RESULT, STATUS_FAR_FAILED, 0);
+
+			break;
+		}
+		else if (val == PSENSOR_QUERY_CALI_DOING)
+		{
+			::PostMessage(pDlg->m_hWnd, WM_UPDATE_THREAD_RESULT, STATUS_FAR_DOING, 0);
+		}
+		else
+		{
+			::PostMessage(pDlg->m_hWnd, WM_UPDATE_THREAD_RESULT, STATUS_FAR_SUCCESS, 0);
+
+			break;
+		}
+
+
+		Sleep(1000);
+	}
+
+	::PostMessage(pDlg->m_hWnd, WM_UPDATE_THREAD_RESULT, STATUS_WAIT_PROMPT, 0);
+	WaitForSingleObject(pDlg->m_event.m_hObject, 4000);
+	pDlg->m_rawdata_stage = RAW_DATA_STATE_NEAR;
+	::PostMessage(pDlg->m_hWnd, WM_UPDATE_THREAD_RESULT, STATUS_NEAR_BEGIN, 0);
+
+	t5506_send_in_ear_cali_cmd();
+
+	for (i = 0; i < 5; i++)
+	{
+		val = t5506_query_cali_status();
+
+		if (val == PSENSOR_QUERY_CALI_FAIL)
+		{
+			::PostMessage(pDlg->m_hWnd, WM_UPDATE_THREAD_RESULT, STATUS_NEAR_FAILED, 0);
+
+			break;
+		}
+		else if (val == PSENSOR_QUERY_CALI_DOING)
+		{
+			::PostMessage(pDlg->m_hWnd, WM_UPDATE_THREAD_RESULT, STATUS_NEAR_DOING, 0);
+		}
+		else
+		{
+			::PostMessage(pDlg->m_hWnd, WM_UPDATE_THREAD_RESULT, STATUS_NEAR_SUCCESS, 0);
+		
+			break;
+		}
+
+		Sleep(1000);
+	}
+
+#ifdef POWER_SUPPLY_SUPPORT
+	if (pDlg->m_gpib_power)
+	{
+		int ret = 0;
+
+		if (pDlg->m_power_type == KEYSIGHT_66319D)
+		{
+			//	ret = PSUSetting(Condition_OFF);
+			ret = PSUSettingV2(Condition_OFF, Equipment__66319D);
+		}
+		else
+		{
+			ret = PSUSettingV2(Condition_OFF, Equipment__2306);
+		}
+
+		Log_d(_T("psu setting off =%d"), ret);
+	}
+#endif
+	::PostMessage(pDlg->m_hWnd, WM_UPDATE_THREAD_RESULT, STATUS_ALL_DONE, 0);
+
+	return 0;
 }

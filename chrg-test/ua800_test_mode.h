@@ -22,6 +22,11 @@ extern "C"
 #define UA800_ERROR_PRODUCT_MODE		(-11)
 #define UA800_ERROR_DATABASE			(-12)
 
+
+#define PSENSOR_QUERY_CALI_FAIL 0
+#define PSENSOR_QUERY_CALI_SUCCESS 1
+#define PSENSOR_QUERY_CALI_DOING 2
+
 typedef void (*fn_send_msg)(void *dlg, const char *msg);
 
 /*
@@ -73,6 +78,12 @@ int t5506_send_get_raw_data_2();
 void t5506_send_reset_cmd();
 
 void t5506_send_factory_reset_cmd();
+
+BOOL t5506_send_in_ear_cali_cmd();
+
+BOOL t5506_send_out_ear_cali_cmd();
+
+int t5506_query_cali_status();
 
 #ifdef __cplusplus
 }

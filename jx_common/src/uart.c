@@ -3915,9 +3915,9 @@ Boolean uart_send_buf(buf_t *b, send_cb fn)
 
 	b->count++;
 
-	printf("++++++++++++\r\n");
+	Log_d(_T("++++++++++++\r\n"));
 	print_buffer(b);
-	printf("++++++++++++\r\nsend UART len = %d, count = %d\n", b->len, b->count);
+	Log_d(_T("++++++++++++\r\nsend UART len = %d, count = %d\n"), b->len, b->count);
 #ifdef WIN32
 	win32_UART_PutBytes(HX_WIN32_UART_PORT, b->pbuff, b->len);
 #endif

@@ -947,7 +947,7 @@ void print_buffer(buf_t *b)
 		}
 	}
 	
-	printf("len = %d, ovflow = %d, data = %s\r\n", b->len, overflow, tmp);
+	Log_d(("len = %d, ovflow = %d, data = %s\r\n"), b->len, overflow, tmp);
 }
 
 void print_mem(char *b, int len)

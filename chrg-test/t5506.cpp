@@ -373,23 +373,23 @@ Boolean t5506_send_race_cmd(kal_uint16 racecmd)
 
 		if (dwWait == WAIT_ABANDONED)
 		{
-			printf("wait error!\n");
+			Log_d(_T("wait error!\n"));
 			break;
 		} 
 		else if (dwWait == WAIT_TIMEOUT)
 		{
-			printf("wait rsp timeout!\n");
+			Log_d(_T("wait rsp timeout!\n"));
 			continue;
 		}
 		else if (dwWait == WAIT_OBJECT_0)
 		{
-			printf("enter test mode RSP ok!\n");
+			Log_d(_T("enter test mode RSP ok!\n"));
 			ret = TRUE;
 			break;
 		}
 		else
 		{
-			printf("wait error!\n");
+			Log_e(_T("wait error!\n"));
 		}
 	}
 
@@ -416,7 +416,7 @@ void dlg_update_status_ui(int rcv_count, int snd_cnt, int value, const CString& 
 	if (value >= 0)
 	{
 		CString prompt;
-		prompt.Format(_T("\r\n收到包:%d, 发送包:%d，光感值：0x%x(%d)\r\n"), rcv_count, snd_cnt, value, value);
+		prompt.Format(_T("\r\n收到包:%d, 发送包:%d，返回值：0x%x(%d)\r\n"), rcv_count, snd_cnt, value, value);
 
 		pResult = new CString(prompt);
 	}
@@ -531,4 +531,93 @@ void t5506_send_factory_reset_cmd()
 
 
 	dlg_update_status_ui(rcv_count, snd_count, val, info);
+}
+
+
+BOOL t5506_send_out_ear_cali_cmd()
+{
+	BOOL ret = FALSE;
+
+	if (!t5506_send_race_cmd(PSENSOR_RACE_CAL_CT))
+	{
+		CString info(_T("发送出耳校准失败！"));
+		dlg_update_status_ui(rcv_count, snd_count, RAW_DATA_VALUE_ERROR, info);
+		return FALSE;
+	}
+
+	CString info;
+	int val = rsp_value;
+	if (rsp_value == 1)
+	{
+		info = _T("出耳校准OK");
+		ret = TRUE;
+	}
+	else
+	{
+		info = _T("出耳校准失败！");
+	}
+
+
+	dlg_update_status_ui(rcv_count, snd_count, val, info);
+
+	return ret;
+}
+
+BOOL t5506_send_in_ear_cali_cmd()
+{
+	BOOL ret = FALSE;
+
+	if (!t5506_send_race_cmd(PSENSOR_RACE_CAL_G2))
+	{
+		CString info(_T("发送入耳校准失败！"));
+		dlg_update_status_ui(rcv_count, snd_count, RAW_DATA_VALUE_ERROR, info);
+		return ret;
+	}
+
+	CString info;
+	int val = rsp_value;
+	if (rsp_value == 1)
+	{
+		info = _T("入耳校准OK");
+		ret = TRUE;
+	}
+	else
+	{
+		info = _T("入耳校准失败！");
+	}
+
+
+	dlg_update_status_ui(rcv_count, snd_count, val, info);
+
+	return ret;
+}
+
+int t5506_query_cali_status()
+{
+	if (!t5506_send_race_cmd(PSENSOR_QUERY_CALI_STATUS))
+	{
+		CString info(_T("查询校准状态失败！"));
+		dlg_update_status_ui(rcv_count, snd_count, RAW_DATA_VALUE_ERROR, info);
+		return PSENSOR_QUERY_CALI_FAIL;
+	}
+
+	CString info;
+	int val = rsp_value;
+	if (rsp_value == PSENSOR_QUERY_CALI_FAIL)
+	{
+		info = _T("查询校准状态！");
+		
+	}
+	else if (rsp_value == PSENSOR_QUERY_CALI_SUCCESS)
+	{
+		info = _T("查询校准状态OK");
+	}
+	else
+	{
+		info = _T("正在校准...");
+	}
+
+	dlg_update_status_ui(rcv_count, snd_count, val, info);
+
+	return val;
 }

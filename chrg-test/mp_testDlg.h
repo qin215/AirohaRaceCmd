@@ -113,6 +113,7 @@ typedef struct _bt_addr_name_offset_struct_
 extern BT_ADDR_NAME_OFFSET   addr_name_offset[20];
 
 #define WM_UPDATE_STATIC (WM_USER + 100)  
+#define WM_UPDATE_THREAD_RESULT	(WM_USER + 101)
 
 class CMp_testDlg : public CDialog
 {
@@ -144,6 +145,8 @@ public:
 
 	VOID TimerProc(HWND hwnd,UINT message,UINT iTimerID,DWORD dwTime);
    // unsigned char Do_JtagRegRead(unsigned int devIndex, unsigned int addr,);
+
+	CEvent m_event;
     
 // Dialog Data
 	//{{AFX_DATA(CMp_testDlg)
@@ -249,6 +252,8 @@ protected:
 	afx_msg void OnSelchangeCombo1();
 	afx_msg void OnEnChangeEdit();
 	afx_msg LRESULT OnUpdateStatic(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnGetThreadResult(WPARAM wParam, LPARAM lParam);
+
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:
